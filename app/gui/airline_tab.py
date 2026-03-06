@@ -2,7 +2,7 @@
 Airline Tab GUI
 
 Provides the graphical interface for managing airline records.
-This tab connects the airline model CRUD functions to the GUI form.
+Connects the airline model CRUD functions with the Tkinter GUI.
 """
 
 import tkinter as tk
@@ -19,29 +19,25 @@ from app.models.airline import (
 
 
 class AirlineTab:
-    """
-    GUI tab responsible for airline record management.
-    Handles form input, validation, and table updates.
-    """
+    """GUI tab responsible for airline record management."""
 
     def __init__(self, parent):
 
         self.parent = parent
 
-        # In-memory records list
-        # (Shared across tabs in a real application)
+        # Local record storage (shared storage will be implemented later)
         self.records = []
 
-        # =============================
+        # =========================
         # Tkinter Variables
-        # =============================
+        # =========================
 
         self.company_name_var = tk.StringVar()
         self.search_var = tk.StringVar()
 
-        # =============================
+        # =========================
         # Airline Form
-        # =============================
+        # =========================
 
         form_frame = ttk.LabelFrame(parent, text="Airline Information")
         form_frame.pack(fill="x", padx=10, pady=10)
@@ -56,9 +52,9 @@ class AirlineTab:
             width=40,
         ).grid(row=0, column=1, padx=5, pady=5)
 
-        # =============================
+        # =========================
         # CRUD Buttons
-        # =============================
+        # =========================
 
         button_frame = ttk.Frame(parent)
         button_frame.pack(fill="x", padx=10, pady=5)
@@ -79,9 +75,9 @@ class AirlineTab:
             side="left", padx=5
         )
 
-        # =============================
+        # =========================
         # Search Section
-        # =============================
+        # =========================
 
         search_frame = ttk.LabelFrame(parent, text="Search Airlines")
         search_frame.pack(fill="x", padx=10, pady=10)
@@ -98,9 +94,9 @@ class AirlineTab:
             command=self.search_records,
         ).pack(side="left", padx=5)
 
-        # =============================
+        # =========================
         # Treeview Table
-        # =============================
+        # =========================
 
         table_frame = ttk.Frame(parent)
         table_frame.pack(fill="both", expand=True, padx=10, pady=10)
@@ -119,12 +115,12 @@ class AirlineTab:
 
         self.tree.pack(fill="both", expand=True)
 
-        # Bind row selection event
+        # When user clicks a row
         self.tree.bind("<<TreeviewSelect>>", self.on_row_select)
 
-    # =========================================================
-    # CRUD Methods
-    # =========================================================
+    # =====================================
+    # Helper Method
+    # =====================================
 
     def next_id(self):
         """Generate the next airline ID."""
@@ -135,6 +131,10 @@ class AirlineTab:
             return 1
 
         return max(a["ID"] for a in airlines) + 1
+
+    # =====================================
+    # CRUD Methods
+    # =====================================
 
     def save_record(self):
         """Create a new airline record."""
@@ -151,7 +151,9 @@ class AirlineTab:
 
         airline = create_airline(airline_id, company_name)
 
-        self.records.append(airline)
+        # Prevent accidental duplicate object insertion
+        if airline not in self.records:
+            self.records.append(airline)
 
         self.refresh_treeview()
         self.clear_form()
@@ -159,7 +161,7 @@ class AirlineTab:
         messagebox.showinfo("Success", "Airline record created.")
 
     def update_record(self):
-        """Update the selected airline."""
+        """Update the selected airline record."""
 
         selected = self.tree.selection()
 
@@ -189,7 +191,7 @@ class AirlineTab:
         messagebox.showinfo("Success", "Airline record updated.")
 
     def delete_record(self):
-        """Delete the selected airline."""
+        """Delete the selected airline record."""
 
         selected = self.tree.selection()
 
@@ -211,6 +213,7 @@ class AirlineTab:
         delete_airline(self.records, airline_id)
 
         self.refresh_treeview()
+        self.clear_form()
 
     def clear_form(self):
         """Clear form inputs."""
@@ -224,8 +227,7 @@ class AirlineTab:
 
         results = search_airlines(self.records, search_term)
 
-        for row in self.tree.get_children():
-            self.tree.delete(row)
+        self.tree.delete(*self.tree.get_children())
 
         for record in results:
             self.tree.insert(
@@ -235,10 +237,9 @@ class AirlineTab:
             )
 
     def refresh_treeview(self):
-        """Refresh the table with current airline records."""
+        """Refresh the table with all airline records."""
 
-        for row in self.tree.get_children():
-            self.tree.delete(row)
+        self.tree.delete(*self.tree.get_children())
 
         for record in get_airlines(self.records):
             self.tree.insert(
@@ -248,7 +249,7 @@ class AirlineTab:
             )
 
     def on_row_select(self, event):
-        """Populate the form when a row is selected."""
+        """Populate form fields when a table row is selected."""
 
         selected = self.tree.selection()
 
