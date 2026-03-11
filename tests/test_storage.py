@@ -3,9 +3,7 @@ import unittest
 import os
 import tempfile
 import shutil
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'app', 'storage')))
-from json_storage import StorageManager
+from app.storage.json_storage import StorageManager
 
 class TestStorageManager(unittest.TestCase):
     """
