@@ -106,7 +106,7 @@ class TestClientModel(unittest.TestCase):
     def test_validate_client_accepts_valid_input(self):
         """Validate that valid input is accepted."""
         # Call validate_client with all valid fields
-        is_valid = validate_client(
+        is_valid, error = validate_client(
             name= "Bob Jones",
             addr1= "32 High Road",
             city= "Manchester",
@@ -114,6 +114,7 @@ class TestClientModel(unittest.TestCase):
             phone= "01619999998",
         )
         self.assertTrue(is_valid)
+        self.assertEqual(error,"")
 
     def test_get_clients_filters_correctly(self):
         """Test that get_clients correctly filters records by type."""
