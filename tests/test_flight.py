@@ -15,7 +15,7 @@ class TestFlightModel(unittest.TestCase):
     """Test cases for the flight model functions."""
 
     def setUp(self):
-        """Setup flight data for test cases."""""
+        """Setup flight data for test cases."""
         self.flight=create_flight(
             flight_id=222,
             client_id=333,
@@ -34,7 +34,7 @@ class TestFlightModel(unittest.TestCase):
         )
         # Create a non-flight record to test filtering in get_flights
         self.records=[self.flight, flight_two,
-        {" ID": 888, "Type": "client", "Name": "Johnny Marr"}
+        {"ID": 888, "Type": "client", "Name": "Johnny Marr"}
         ]
 
     def test_create_flight_returns_dict(self):
